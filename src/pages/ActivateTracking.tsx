@@ -1,14 +1,47 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import {Button, Input, message, Steps, theme} from 'antd';
-
+import Maps from "../components/Maps.tsx";
+import MapActions from "../utils/actions";
+import useCustomFetch from "../utils/useCustomFetch.ts";
 
 export const ActivateTracking: React.FC = () => {
     const {token} = theme.useToken();
     const [current, setCurrent] = useState(0);
+    const [destinationAddress, setDestinationAddress] = useState("");
+    const [sourceAddress, setSourceAddress] = useState("");
+    const [parcelId, setParcelId] = useState("");
+    const [trackEaseId, setTrackEaseId] = useState("");
+
+    const fetchParcel = useCustomFetch(async () =>
+            MapActions.createParcel({tracking_number: parcelId, departure_address: sourceAddress, destination_address: destinationAddress, current_status:"pending"}),
+    false,
+    (data: any) => {
+        message.success(data.message);
+        setCurrent(current + 1);
+        // setParcelId(data);
+    });
+
 
     const next = () => {
-        setCurrent(current + 1);
+        if (current === 0) {
+            if (destinationAddress === "" || sourceAddress === "") {
+                message.error("Please fill in all fields");
+            } else if (destinationAddress === sourceAddress) {
+                message.error("Source and Destination cannot be the same");
+            } else {
+                setCurrent(current + 1);
+                message.success("Source and Destination set successfully")
+            }
+        }
+        if (current === 1) {
+            if (parcelId === "") {
+                message.error("Please fill in all fields");
+            } else {
+                fetchParcel.triggerFetch();
+            }
+        }
+
     };
 
     const prev = () => {
@@ -18,10 +51,10 @@ export const ActivateTracking: React.FC = () => {
     const destinationContent = (
         <div className="flex gap-x-8 justify-evenly items-center">
             <div>
-                <Input className="w-full p-4" placeholder="Source Address"/>
+                <Input className="w-full p-4" value={sourceAddress ? sourceAddress : ""} placeholder="Source Address" onChange={(e)=> setSourceAddress(e.target.value)}/>
             </div>
             <div>
-                <Input className="w-full p-4" placeholder="Destination Address"/>
+                <Input className="w-full p-4" value={destinationAddress ? destinationAddress : ""} placeholder="Destination Address" onChange={(e)=> setDestinationAddress(e.target.value)}/>
             </div>
         </div>
     );
@@ -29,7 +62,7 @@ export const ActivateTracking: React.FC = () => {
     const parcelContent = (
         <div className="flex gap-x-8 justify-evenly items-center">
             <div>
-                <Input className="w-full p-4" placeholder="Parcel Tracking ID"/>
+                <Input className="w-full p-4" value={parcelId ? parcelId : ""} placeholder="Parcel Tracking ID" onChange={(e)=> setParcelId(e.target.value)}/>
             </div>
 
         </div>
@@ -37,16 +70,16 @@ export const ActivateTracking: React.FC = () => {
 
     const steps = [
         {
-            title: 'First',
+            title: 'Destinations',
             content: destinationContent,
         },
         {
-            title: 'Second',
+            title: 'Parcel',
             content: parcelContent,
         },
         {
-            title: 'Last',
-            content: 'Last-content',
+            title: 'Tracking',
+            content: <Maps />,
         },
     ];
 

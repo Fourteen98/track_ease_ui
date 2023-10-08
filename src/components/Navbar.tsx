@@ -37,7 +37,7 @@ export const Navbar: React.FC = () => {
                     </div>
                     <div className="hidden lg:flex lg:gap-x-12">
                         {navigation.map((item) => (
-                            <NavLink to={item.to} className={({ isActive }) => (isActive ? 'text-[#a96c46] hover:text-[#a96c46] text-sm font-semibold leading-6' : 'hover:text-[#a96c46] text-sm font-semibold leading-6 text-gray-900')}>
+                            <NavLink key={item.to} to={item.to} className={({ isActive }) => (isActive ? 'text-[#a96c46] hover:text-[#a96c46] text-sm font-semibold leading-6' : 'hover:text-[#a96c46] text-sm font-semibold leading-6 text-gray-900')}>
                                 {item.name}
                             </NavLink>
                         ))}
@@ -73,7 +73,7 @@ export const Navbar: React.FC = () => {
                             <div className="-my-6 divide-y divide-gray-500/10">
                                 <div className="space-y-2 py-6">
                                     {navigation.map((item) => (
-                                        <NavLink to={item.to} className={({ isActive }) => (isActive ? '-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-[#b87e5f]' : '-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-[#b87e5f]')} end>
+                                        <NavLink key={item.to} to={item.to} className={({ isActive }) => (isActive ? '-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-[#b87e5f]' : '-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-[#b87e5f]')} end>
                                             {item.name}
                                         </NavLink>
                                     ))}
